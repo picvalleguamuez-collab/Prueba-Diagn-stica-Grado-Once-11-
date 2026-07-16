@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OVA Diagnóstica Grado 11° - PIC-ET 2026</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+      background: #f4f7f9;
+      color: #1a1a2e;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); padding: 30px; position: relative; }
+
+    /* ===== HEADER PREMIUM (verde esmeralda) ===== */
+    .header-premium {
+      background: linear-gradient(135deg, #00695C 0%, #004D40 100%);
+      color: #fff;
+      padding: 28px 30px 20px;
+      border-radius: 12px 12px 0 0;
+      margin: -30px -30px 30px -30px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .header-premium h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .header-premium h1 span { color: #FFB300; }
+    .header-premium .universidad {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-top: 6px;
+    }
+    .header-premium .pic-et {
+      font-size: 18px;
+      font-weight: 500;
+      color: #FFB300;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      padding-top: 10px;
+      margin-top: 10px;
+      display: inline-block;
+    }
+    .header-premium .ubicacion {
+      font-size: 14px;
+      opacity: 0.95;
+      margin-top: 8px;
+      font-weight: 300;
+    }
+    .header-premium .creador {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-top: 6px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 8px;
+      display: inline-block;
+    }
+
+    /* ===== LAYOUT DE DOS COLUMNAS ===== */
+    .dashboard-inicio {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin: 20px 0;
+    }
+    @media (max-width: 768px) {
+      .dashboard-inicio { grid-template-columns: 1fr; }
+    }
+    .col-estudiante, .col-docente {
+      background: #f1f8f5;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #c8e6d9;
+    }
+    .col-estudiante h2, .col-docente h2 {
+      color: #00695C;
+      font-size: 20px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #FFB300;
+      padding-bottom: 8px;
+    }
+
+    /* ===== FORMULARIOS ===== */
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group label { font-weight: 600; font-size: 14px; margin-bottom: 4px; color: #00695C; }
+    .form-group input, .form-group select {
+      padding: 10px 14px;
+      border: 2px solid #c8e6d9;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border 0.2s;
+      background-color: #fff;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: #00695C; outline: none; }
+
+    .btn {
+      background: #00695C; color: #fff; border: none; padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 16px; cursor: pointer; transition: background 0.2s, transform 0.1s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn:hover { background: #004D40; }
+    .btn:active { transform: scale(0.97); }
+    .btn-gold { background: #FFB300; color: #004D40; }
+    .btn-gold:hover { background: #e6a200; }
+    .btn-orange { background: #e67e22; color: #fff; border-radius: 8px; }
+    .btn-orange:hover { background: #d35400; }
+    .btn-outline { background: transparent; border: 2px solid #00695C; color: #00695C; }
+    .btn-outline:hover { background: #00695C; color: #fff; }
+    .btn-block { width: 100%; justify-content: center; }
+
+    /* ===== SECCIÓN DE PREGUNTAS ===== */
+    .hidden { display: none !important; }
+
+    .pregunta {
+      background: #f9fafc;
+      border-left: 4px solid #00695C;
+      padding: 24px;
+      margin-bottom: 24px;
+      border-radius: 0 12px 12px 0;
+    }
+    .pregunta .enunciado { font-size: 15px; line-height: 1.7; margin-bottom: 16px; text-align: justify; color: #2c3e50; }
+    .pregunta .opcion {
+      display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; margin: 6px 0; border-radius: 8px; cursor: pointer; transition: background 0.15s; background: #fff; border: 1px solid #e1e5eb;
+    }
+    .pregunta .opcion:hover { background: #eef2f5; border-color: #cdd4dc; }
+    .pregunta .opcion input[type="radio"] { width: 18px; height: 18px; accent-color: #00695C; cursor: pointer; margin-top: 3px; flex-shrink: 0; }
+    .pregunta .opcion label { font-size: 15px; cursor: pointer; width: 100%; text-align: justify; }
+
+    #barraProgresoContainer {
+      background: #e8edf4; border-radius: 20px; height: 16px; margin-bottom: 24px; overflow: hidden;
+    }
+    #barraProgreso {
+      background: linear-gradient(90deg, #FFB300 0%, #2ecc71 100%); height: 100%; width: 0%; transition: width 0.4s ease;
+    }
+
+    /* ===== RESULTADOS ESTUDIANTE ===== */
+    .resultado-header { margin-bottom: 24px; border-bottom: 2px solid #e1e5eb; padding-bottom: 16px; }
+    .resultado-header h2 { font-size: 24px; color: #00695C; margin-bottom: 4px; }
+    .result-card { background: #fff; border: 1px solid #00695C; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .result-card h3 { color: #00695C; display: flex; align-items: center; gap: 8px; font-size: 18px; margin-bottom: 16px; }
+    .result-stats { font-size: 15px; margin-bottom: 12px; }
+    .progress-bg { background: #e8edf4; height: 12px; border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+    .progress-fill { height: 100%; border-radius: 10px; transition: width 1s ease-out; }
+    .fill-lc { background: #2980b9; }
+    .fill-mat { background: #c0392b; }
+    .nivel-badge { display: inline-block; padding: 4px 16px; border-radius: 30px; font-weight: bold; font-size: 13px; color: #fff; margin-bottom: 12px; }
+    .nivel-1 { background: #c0392b; }
+    .nivel-2 { background: #e67e22; }
+    .nivel-3 { background: #2980b9; }
+    .nivel-4 { background: #27ae60; }
+
+    /* ===== PANEL DOCENTE ===== */
+    .panel-docente { background: #f1f8f5; border-radius: 12px; padding: 24px; margin-top: 30px; border: 1px solid #c8e6d9; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-bottom: 20px; }
+    .kpi-card { background: #fff; padding: 16px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); text-align: center; border: 1px solid #edf2f7; }
+    .kpi-card .valor { font-size: 28px; font-weight: 800; color: #00695C; }
+    .kpi-card .etiqueta { font-size: 13px; color: #5a6a7a; margin-top: 5px; }
+    .filtros { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+    .filtros select, .filtros input { padding: 8px 12px; border: 1px solid #c8e6d9; border-radius: 8px; font-size: 14px; background: #fff; }
+    .tabla-wrap { overflow-x: auto; background: #fff; border-radius: 8px; border: 1px solid #c8e6d9; }
+    .tabla-wrap table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .tabla-wrap th { background: #00695C; color: #fff; padding: 10px 12px; text-align: left; white-space: nowrap; }
+    .tabla-wrap td { padding: 10px 12px; border-bottom: 1px solid #e8edf4; vertical-align: middle; }
+    .tabla-wrap tr:hover td { background: #f0f4f8; }
+    .calificacion-badge {
+      display: inline-block; padding: 2px 10px; border-radius: 20px; font-weight: 600; font-size: 11px; color: #fff; margin-left: 4px;
+    }
+    .calif-bajo { background: #c0392b; }
+    .calif-basico { background: #e67e22; }
+    .calif-alto { background: #2980b9; }
+    .calif-superior { background: #27ae60; }
+
+    /* ===== MODALES ===== */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,34,68,0.7); display: flex; justify-content: center; align-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s; padding: 20px; backdrop-filter: blur(3px); }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-content { background: #fff; padding: 30px; border-radius: 16px; max-width: 700px; width: 100%; box-shadow: 0 15px 50px rgba(0,0,0,0.3); transform: translateY(-20px); transition: transform 0.3s; position: relative; max-height: 90vh; overflow-y: auto; }
+    .modal-overlay.active .modal-content { transform: translateY(0); }
+    .modal-content h3 { color: #00695C; margin-bottom: 16px; border-bottom: 2px solid #FFB300; padding-bottom: 10px; font-size: 20px; }
+    .modal-content p { font-size: 15px; color: #333; text-align: justify; margin-bottom: 20px; line-height: 1.7; }
+    .close-modal { position: absolute; top: 15px; right: 20px; cursor: pointer; font-size: 28px; color: #999; border: none; background: none; line-height: 1; }
+    .close-modal:hover { color: #e74c3c; }
+
+    /* ===== TABLA DE DETALLE ===== */
+    .detalle-tabla { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; }
+    .detalle-tabla th { background: #00695C; color: #fff; padding: 8px 12px; text-align: left; }
+    .detalle-tabla td { padding: 8px 12px; border-bottom: 1px solid #e8edf4; }
+    .detalle-tabla .correcta { color: #27ae60; font-weight: bold; }
+    .detalle-tabla .incorrecta { color: #c0392b; font-weight: bold; }
+
+    /* ===== CRÉDITOS ===== */
+    .creditos-premium { margin-top: 50px; padding: 30px; background: linear-gradient(135deg, #004D40 0%, #00695C 100%); color: #fff; border-radius: 16px; border-top: 4px solid #FFB300; }
+    .creditos-premium h3 { color: #FFB300; font-size: 18px; margin-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
+    .creditos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; font-size: 14px; line-height: 1.8; }
+    @media print { .no-print { display: none !important; } }
+
+    /* ===== SVG para triángulo (estilo mejorado) ===== */
+    .figura-triangulo {
+      text-align: center;
+      margin: 16px 0;
+      background: #f9fafc;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #c8e6d9;
+    }
+    .figura-triangulo svg {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="app">
+
+  <!-- ===== HEADER PREMIUM ===== -->
+  <div class="header-premium">
+    <h1>Prueba diagnóstica de lectura crítica, área de castellano y matemáticas <span>Grado 11°</span></h1>
+    <div class="universidad">Universidad Nacional Abierta y a Distancia</div>
+    <div class="pic-et">Plan Integral de Cobertura Con Enfoque Territorial (PIC-ET)</div>
+    <div class="ubicacion">Valle del Guamuez, La Hormiga, Putumayo | UDR-Zona Sur Valle del Guamuez</div>
+    <div class="creador"><strong>Creador:</strong> Stiven Eduardo Bermúdez · Lic. En Lengua Castellana cMg Administración Educativa</div>
+  </div>
+
+  <!-- ===== DASHBOARD DE INICIO: ESTUDIANTE + DOCENTE ===== -->
+  <div id="inicioDashboard" class="dashboard-inicio">
+    <!-- Columna Estudiante -->
+    <div class="col-estudiante">
+      <h2>📝 Registro del Estudiante</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombres y apellidos</label>
+          <input type="text" id="nombre" placeholder="Ej: María Pérez" required>
+        </div>
+        <div class="form-group">
+          <label>Institución</label>
+          <select id="institucion">
+            <option value="IE LA LIBERTAD">IE LA LIBERTAD</option>
+            <option value="IE. LA LIBERTAD LA NOCTURNA">IE. LA LIBERTAD LA NOCTURNA</option>
+            <option value="IERJAS- EL PLACER">IERJAS- EL PLACER</option>
+            <option value="IER. EL CAIRO">IER. EL CAIRO</option>
+            <option value="IE. VALLE DEL GUAMUEZ">IE. VALLE DEL GUAMUEZ</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Grado</label>
+          <select id="grado">
+            <option value="11-1">11-1</option>
+            <option value="11-2">11-2</option>
+            <option value="11-3">11-3</option>
+            <option value="11-4">11-4</option>
+            <option value="11-5">11-5</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Género</label>
+          <select id="genero">
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tipo de ID</label>
+          <select id="tipoId">
+            <option value="CC">Cédula de Ciudadanía</option>
+            <option value="TI">Tarjeta de Identidad</option>
+            <option value="CE">Cédula de Extranjería</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Número de documento</label>
+          <input type="text" id="documento" placeholder="Ej: 123456789">
+        </div>
+      </div>
+      <button class="btn btn-orange btn-block" id="btnIniciar" onclick="iniciarPrueba()">▶ Iniciar Prueba Diagnóstica</button>
+    </div>
+
+    <!-- Columna Docente -->
+    <div class="col-docente">
+      <h2>🔐 Acceso Docente</h2>
+      <p style="font-size:14px; color:#555; margin-bottom:16px;">Ingresa tus datos institucionales para acceder al panel de seguimiento.</p>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label>Nombre del Docente</label>
+        <input type="text" id="docenteNombre" placeholder="Ej: Carlos Gómez">
+      </div>
+      <div class="form-group" style="margin-bottom:12px;">
+        <label>Correo Institucional</label>
+        <input type="email" id="docenteCorreo" placeholder="ejemplo@unad.edu.co" pattern=".+@unad\.edu\.co$">
+      </div>
+      <div class="form-group" style="margin-bottom:20px;">
+        <label>Contraseña</label>
+        <input type="password" id="inputPwd" placeholder="********">
+      </div>
+      <button class="btn btn-block" onclick="verificarLogin()">Ingresar al Panel</button>
+    </div>
+  </div>
+
+  <!-- ===== SECCIÓN DE PREGUNTAS (oculta) ===== -->
+  <div id="seccionPreguntas" class="hidden">
+    <div id="barraProgresoContainer">
+      <div id="barraProgreso" style="width:0%;"></div>
+    </div>
+
+    <!-- Texto base para Lectura Crítica (Grado 11) -->
+    <div style="background:#fff; padding:24px; border-radius:12px; margin-bottom:24px; border:1px solid #c8e6d9; box-shadow: 0 4px 10px rgba(0,0,0,0.03);">
+      <h3 style="color:#00695C; margin-bottom:12px; border-bottom: 2px solid #f0f4f8; padding-bottom: 10px;">📖 Texto base – Preguntas 1 a 5</h3>
+      <p style="font-size:15px; margin-bottom:12px; font-weight:bold; color: #333;">¿Qué hay Detrás de las Redes Sociales?</p>
+      <div style="font-size:15px; line-height:1.7; text-align:justify; color: #444;">
+        <p style="margin-bottom: 10px;">Las redes sociales son una forma de interacción a través de la red, una manera de conectar a las personas con sus amigos y relacionarse con otras personas. En definitiva, una herramienta de comunicación eficaz. Eso sí, siempre y cuando, sepan cómo utilizarse. Y es que, las redes sociales tienen un lado oscuro. La suplantación de identidad y el acoso a menores son algunos de los casos más comunes.</p>
+        <p style="margin-bottom: 10px;">El problema fundamental es la enorme cantidad de información que muchos jóvenes no dudan en poner en estos lugares. Los usuarios cuelgan sus fotos y proporcionan información acerca de su lugar de residencia, incluso algunos no dudan en poner su número de teléfono. Y es ahí cuando se pone en peligro la intimidad.</p>
+        <p style="margin-bottom: 10px;">La voz de alarma sobre este asunto sonó hace unos meses. Ello ha provocado que algunos de estos lugares modifiquen sus normas de utilización. Entre estos cambios, se prohíbe la utilización de este tipo de redes a menores de 14 años y se aconseja que los jóvenes de entre 14 y 18 años consulten con sus padres la utilización de estos servicios.</p>
+        <p style="margin-bottom: 10px;">Los mayores de 18 años son conscientes de sus actos y de lo que conllevan estas normas. Pero ¿qué pasa con los adolescentes? Estas cláusulas lo dejan claro: son los padres quienes deben controlarlos. Por ello, te proporcionamos algunos consejos que puedes dar a tus hijos: no indiques datos personales como tu dirección o teléfono, utiliza una contraseña compleja, no publiques fotos comprometidas, otros usuarios podrán copiar tus fotos, bloquea a los desconocidos. Asegúrate de que todos tus contactos son conocidos y fiables.</p>
+        <p>Los avances en el terreno de las nuevas tecnologías siempre son buenos. Pero hay que saber cómo manejarlos. Por eso, concientiza a tus hijos sobre la importancia de preservar su intimidad.</p>
+      </div>
+      <p style="font-size:13px; color:#7f8c8d; margin-top:15px; text-align:right; font-style: italic;">Tomado y adaptado de: Menuda Ciencia. Revista trimestral gratuita. (s. f.). Revista del Museo de la Ciencia de Valladolid.</p>
+    </div>
+
+    <div id="preguntasContainer"></div>
+    <button class="btn btn-orange btn-block" id="btnCalificar" onclick="calificar()" style="font-size: 18px; padding: 15px;">✅ Finalizar Prueba</button>
+  </div>
+
+  <!-- ===== RESULTADOS DEL ESTUDIANTE (oculto) ===== -->
+  <div id="resultados" class="hidden">
+    <div class="resultado-header">
+      <h2 id="studentNameResult">Resultado de Estudiante</h2>
+      <p id="studentInfoResult">Institución · Grado</p>
+    </div>
+
+    <div class="result-card">
+      <h3>📖 Lectura Crítica</h3>
+      <p class="result-stats">Aciertos: <span id="r_aciertosLC">0/5</span> · Puntaje: <span id="r_puntajeLC">0</span>/100 · Nota UNAD: <strong id="r_notaLC">0.0</strong></p>
+      <div class="progress-bg"><div class="progress-fill fill-lc" id="barLC" style="width: 0%"></div></div>
+      <div class="nivel-badge" id="r_badgeLC">Nivel 1</div>
+      <p class="result-desc" id="r_descLC">Descripción del nivel...</p>
+      <button class="btn btn-outline" style="font-size: 13px; padding: 8px 16px;" onclick="mostrarPlanMejora('LC')">💡 Ver plan de mejora</button>
+    </div>
+
+    <div class="result-card">
+      <h3>📐 Matemáticas</h3>
+      <p class="result-stats">Aciertos: <span id="r_aciertosMAT">0/5</span> · Puntaje: <span id="r_puntajeMAT">0</span>/100 · Nota UNAD: <strong id="r_notaMAT">0.0</strong></p>
+      <div class="progress-bg"><div class="progress-fill fill-mat" id="barMAT" style="width: 0%"></div></div>
+      <div class="nivel-badge" id="r_badgeMAT">Nivel 1</div>
+      <p class="result-desc" id="r_descMAT">Descripción del nivel...</p>
+      <button class="btn btn-outline" style="font-size: 13px; padding: 8px 16px;" onclick="mostrarPlanMejora('MAT')">💡 Ver plan de mejora</button>
+    </div>
+
+    <p style="font-size: 13px; color: #7f8c8d; text-align: center; margin-bottom: 20px;">
+      Esta información ha sido registrada y será usada por tus docentes para fortalecer los procesos de enseñanza y aprendizaje.
+    </p>
+    <div style="text-align: center;">
+      <button class="btn btn-orange" onclick="reiniciar()" style="padding: 12px 40px;">Finalizar</button>
+    </div>
+  </div>
+
+  <!-- ===== PANEL DOCENTE (oculto) ===== -->
+  <div id="panelDocente" class="hidden panel-docente">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2>📊 Panel de Control Docente</h2>
+      <button class="btn btn-outline" style="padding: 6px 16px; font-size: 14px;" onclick="cerrarPanelDocente()">← Salir</button>
+    </div>
+
+    <div class="filtros">
+      <select id="filtroInstitucion" onchange="renderizarPanel()">
+        <option value="">Todas las instituciones</option>
+        <option value="IE LA LIBERTAD">IE LA LIBERTAD</option>
+        <option value="IE. LA LIBERTAD LA NOCTURNA">IE. LA LIBERTAD LA NOCTURNA</option>
+        <option value="IERJAS- EL PLACER">IERJAS- EL PLACER</option>
+        <option value="IER. EL CAIRO">IER. EL CAIRO</option>
+        <option value="IE. VALLE DEL GUAMUEZ">IE. VALLE DEL GUAMUEZ</option>
+      </select>
+      <select id="filtroGrado" onchange="renderizarPanel()">
+        <option value="">Todos los grados</option>
+        <option value="11-1">11-1</option>
+        <option value="11-2">11-2</option>
+        <option value="11-3">11-3</option>
+        <option value="11-4">11-4</option>
+        <option value="11-5">11-5</option>
+      </select>
+      <select id="filtroGenero" onchange="renderizarPanel()">
+        <option value="">Todos los géneros</option>
+        <option value="Masculino">Masculino</option>
+        <option value="Femenino">Femenino</option>
+      </select>
+    </div>
+
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="tabla-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Estudiante</th>
+            <th>Institución</th>
+            <th>Grado</th>
+            <th>Lectura Crítica</th>
+            <th>Matemáticas</th>
+            <th>Nota Final</th>
+            <th>Nivel</th>
+            <th>Informe</th>
+            <th>Detalle</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyResultados"></tbody>
+      </table>
+    </div>
+    <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
+      <button class="btn btn-orange" onclick="exportarCSV()">⬇ Exportar a Excel (CSV)</button>
+      <button class="btn btn-outline" onclick="exportarJSON()">⬇ Exportar para Power BI (JSON)</button>
+      <button class="btn btn-outline" onclick="limpiarDatos()" style="margin-left: auto;">🗑 Borrar todos los datos</button>
+    </div>
+  </div>
+
+  <!-- ===== CRÉDITOS ===== -->
+  <div class="creditos-premium">
+    <h3>Créditos Institucionales</h3>
+    <div class="creditos-grid">
+      <div>
+        <strong>UNAD:</strong> Universidad Nacional Abierta y a Distancia<br>
+        <strong>VIDER:</strong> Vicerrectoría de Inclusión Social para el Desarrollo Regional y Proyección Comunitaria<br>
+        <strong>PAEBM:</strong> Programa de Alfabetización, Educación Básica y Media para Jóvenes y Adultos<br>
+        <strong>SISSU:</strong> Sistema de Servicio Social Unadista<br>
+        <strong>SINEP:</strong> El Sistema Nacional de Educación Permanente<br>
+        <strong>PIC-ET:</strong> Plan Integral de Cobertura con Enfoque Integral
+      </div>
+      <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; border-left: 4px solid #FFB300;">
+        <div style="font-size: 16px; margin-bottom: 8px; color: #FFB300; font-weight: bold;">Ficha Técnica de Creación</div>
+        <strong>Docente Diseñador:</strong> Stiven Eduardo T. Bermúdez<br>
+        <em>Licenciado En Lengua Castellana</em><br>
+        <strong>Sede:</strong> UDR-ZONA SUR Valle del Guamuez<br>
+        <strong>Año de Implementación:</strong> 2026
+      </div>
+    </div>
+  </div>
+
+</div> <!-- fin container -->
+
+<!-- ===== MODALES ===== -->
+<div class="modal-overlay" id="modalGeneral">
+  <div class="modal-content">
+    <button class="close-modal" onclick="cerrarModalGeneral()">×</button>
+    <h3 id="modalGeneralTitulo">Atención</h3>
+    <p id="modalGeneralTexto">Mensaje</p>
+    <div style="text-align: right;">
+      <button class="btn" onclick="cerrarModalGeneral()">Entendido</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalPlan">
+  <div class="modal-content">
+    <button class="close-modal" onclick="cerrarModalPlan()">×</button>
+    <h3 id="modalPlanTitulo">Plan de Mejora</h3>
+    <div id="modalPlanTexto" style="background:#f0f4f8; padding:20px; border-radius:10px; border-left:4px solid #e67e22; color:#2c3e50; font-size:15px; line-height:1.7;"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalInformeDocente">
+  <div class="modal-content" style="max-width: 600px;">
+    <button class="close-modal" onclick="cerrarModalInformeDocente()">×</button>
+    <h3 id="modalInformeTitulo">Informe Cualitativo</h3>
+    <div id="modalInformeContenido" style="font-size:15px; line-height:1.7;"></div>
+  </div>
+</div>
+
+<!-- NUEVO MODAL PARA DETALLE DE RESPUESTAS -->
+<div class="modal-overlay" id="modalDetalle">
+  <div class="modal-content" style="max-width: 750px;">
+    <button class="close-modal" onclick="cerrarModalDetalle()">×</button>
+    <h3 id="modalDetalleTitulo">Detalle de respuestas</h3>
+    <div id="modalDetalleContenido"></div>
+    <div style="text-align: right; margin-top: 16px;">
+      <button class="btn btn-outline" onclick="cerrarModalDetalle()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  CONFIGURACIÓN Y VARIABLES (Grado 11)
+// ============================================================
+let respuestasUsuario = [];
+let estudianteActual = null;
+let alertasFraude = 0;
+const STORAGE_KEY = 'ova_diagnostica_11';
+
+// Planes de mejora (genéricos, iguales para todos los grados)
+const planesMejora = {
+  LC: {
+    1: "<strong>Consejo:</strong> Lee el texto lentamente y varias veces. Subraya palabras desconocidas y busca su significado. Identifica de qué habla el texto (el tema) intentando resumirlo en una frase corta.",
+    2: "<strong>Consejo:</strong> Practica la identificación de conectores lógicos (sin embargo, además, por lo tanto) ya que estos le dan sentido a las ideas. Intenta explicar con tus propias palabras qué quiere decir el autor en cada párrafo.",
+    3: "<strong>Consejo:</strong> Analiza la intención comunicativa: ¿Qué busca el autor? ¿Convencer, informar, criticar? Practica relacionando diferentes partes del texto para sacar conclusiones que no están escritas directamente.",
+    4: "<strong>Consejo:</strong> Excelente nivel. Sigue retándote con textos más complejos (ensayos filosóficos o científicos). Practica asumiendo una postura crítica frente a lo que lees, cuestionando los argumentos del autor."
+  },
+  MAT: {
+    1: "<strong>Consejo:</strong> Repasa las operaciones matemáticas básicas y la regla de tres simple. Cuando veas una gráfica o tabla, tómate un minuto solo para leer los títulos de las filas y columnas antes de mirar los números.",
+    2: "<strong>Consejo:</strong> Trabaja en ejercicios donde tengas que comparar dos datos diferentes (ej. quién gastó más, cuál es más eficiente). Repasa fórmulas geométricas básicas de área y volumen.",
+    3: "<strong>Consejo:</strong> Fortalece tu razonamiento algebraico. Intenta convertir problemas escritos con palabras en ecuaciones simples. Practica problemas que requieran varios pasos para llegar a la solución.",
+    4: "<strong>Consejo:</strong> Nivel destacado. Profundiza en conceptos de probabilidad, estadística y funciones. Intenta resolver problemas de matemáticas aplicadas a situaciones de ciencias o economía."
+  }
+};
+
+const descriptores = {
+  LC: {
+    1: "Nivel 1 (inicial): Identifica datos puntuales en textos sencillos, pero presenta dificultades para relacionar información o resolver situaciones más allá de lo cotidiano.",
+    2: "Nivel 2 (básico): Comprende textos simples. Identifica información local y global de manera directa en contextos familiares.",
+    3: "Nivel 3 (satisfactorio): Interpreta información implícita, jerarquiza ideas, reconoce estrategias discursivas y la intención comunicativa del autor.",
+    4: "Nivel 4 (avanzado): Evalúa y reflexiona críticamente. Identifica juicios de valor y argumenta posiciones complejas de textos especializados."
+  },
+  MAT: {
+    1: "Nivel 1 (inicial): Identifica datos puntuales en tablas o gráficas sencillas, pero presenta dificultades para comparar variables o resolver situaciones más allá de lo cotidiano.",
+    2: "Nivel 2 (básico): Compara datos y resuelve problemas que involucran relaciones proporcionales simples en contextos conocidos.",
+    3: "Nivel 3 (satisfactorio): Selecciona información, hace manipulaciones algebraicas sencillas, y aplica conceptos geométricos en contextos diversos.",
+    4: "Nivel 4 (avanzado): Resuelve problemas complejos que requieren modelos abstractos y justificación matemática rigurosa."
+  }
+};
+
+// ============================================================
+//  PREGUNTAS (Grado 11) – Lectura Crítica + Matemáticas
+// ============================================================
+const preguntas = [
+  // ---------- LECTURA CRÍTICA (1-5) ----------
+  {
+    id: 1, area: 'Lectura Crítica', competencia: 'Comprensión lectora',
+    enunciado: `<p>Considera el siguiente enunciado del texto:</p><p>“En definitiva, una herramienta de comunicación eficaz”.</p><p>La expresión “En definitiva” se usa para</p>`,
+    opciones: [
+      'contrariar la idea acerca de las características en la comunicación.',
+      'sintetizar las características de comunicación planteadas previamente.',
+      'resumir la tesis central del artículo con respecto a las redes sociales.',
+      'refutar las afirmaciones acerca de las interacciones en la red.'
+    ], correcta: 1 // B
+  },
+  {
+    id: 2, area: 'Lectura Crítica', competencia: 'Comprensión lectora',
+    enunciado: `<p>Considera el último párrafo del texto:</p><p>“Los avances en el terreno de las nuevas tecnologías siempre son buenos. Pero hay que saber cómo manejarlos. Por eso, concientiza a tus hijos sobre la importancia de preservar su intimidad”.</p><p>¿Qué función cumple el fragmento anterior en el texto?</p>`,
+    opciones: [
+      'Añadir una idea de refuerzo con relación al manejo de la intimidad en los hijos.',
+      'Presentar una conclusión frente al tema del manejo de las nuevas tecnologías.',
+      'Adicionar un cierre frente a los avances positivos de las nuevas tecnologías.',
+      'Plantear una idea secundaria frente al tema de la preservación de la intimidad.'
+    ], correcta: 1 // B
+  },
+  {
+    id: 3, area: 'Lectura Crítica', competencia: 'Comprensión lectora',
+    enunciado: `<p>Considera los siguientes fragmentos del texto:</p><p>[1] “Ello ha provocado que algunos de estos lugares modifiquen sus normas de utilización”.</p><p>[2] “Entre estos cambios, se prohíbe la utilización de este tipo de redes a menores de 14 años y se aconseja que los jóvenes de entre 14 y 18 años consulten con sus padres la utilización de estos servicios”.</p><p>¿Cuál es la relación entre el fragmento [1] y el fragmento [2]?</p>`,
+    opciones: [
+      'El fragmento [1] contradice lo dicho en el fragmento [2].',
+      'El fragmento [2] niega lo dicho en el fragmento [1].',
+      'El fragmento [2] complementa lo dicho en el fragmento [1].',
+      'El fragmento [1] parafrasea lo dicho en el fragmento [2].'
+    ], correcta: 2 // C
+  },
+  {
+    id: 4, area: 'Lectura Crítica', competencia: 'Reflexión y evaluación',
+    enunciado: `<p>¿Cuál de los siguientes enunciados expresa un juicio de valor presente en el texto anterior?</p>`,
+    opciones: [
+      '“Las redes sociales son una forma de interacción a través de la red”.',
+      '“Los avances en el terreno de las nuevas tecnologías siempre son buenos”.',
+      '“La voz de alarma sobre este asunto sonó hace unos meses”.',
+      '“Asegúrate de que todos tus contactos son conocidos”.'
+    ], correcta: 1 // B
+  },
+  {
+    id: 5, area: 'Lectura Crítica', competencia: 'Reflexión y evaluación',
+    enunciado: `<p>Considera el siguiente fragmento del texto:</p><p>“El problema fundamental es la enorme cantidad de información que muchos jóvenes no dudan en poner en estos lugares. Los usuarios cuelgan sus fotos y proporcionan información acerca de su lugar de residencia, incluso algunos no dudan en poner su número de teléfono”.</p><p>¿Cuál es la intención comunicativa del autor?</p>`,
+    opciones: [
+      'Informar el tipo de datos que los jóvenes deberían poner en redes sociales.',
+      'Ejemplificar el tipo de información que los jóvenes publican en redes sociales.',
+      'Aconsejar a los jóvenes sobre la información que se maneja en redes sociales.',
+      'Explicar a los jóvenes el problema sobre la información en redes sociales.'
+    ], correcta: 1 // B
+  },
+
+  // ---------- MATEMÁTICAS (6-10) ----------
+  {
+    id: 6, area: 'Matemáticas', competencia: 'Pensamiento variacional · Funciones exponencial y logarítmica',
+    enunciado: `<p>Si se sabe que log₂(x) = 5, ¿cuánto vale x?</p>`,
+    opciones: ['32', '10', '25', '16'],
+    correcta: 0 // A
+  },
+  {
+    id: 7, area: 'Matemáticas', competencia: 'Pensamiento espacial · Vectores en el plano',
+    enunciado: `<p>Si un triángulo rectángulo tiene por base 8 y altura 6, ¿cuánto mide la diagonal?</p>
+    <div class="figura-triangulo">
+      <svg width="300" height="200" viewBox="0 0 300 200" style="font-family: Arial, sans-serif;">
+        <polygon points="40,160 260,160 260,40" 
+                 style="fill:none; stroke:#FF8C00; stroke-width:5; stroke-linejoin:round;" />
+        <text x="140" y="190" fill="red" font-size="20" font-weight="bold">8</text>
+        <text x="270" y="110" fill="red" font-size="20" font-weight="bold">6</text>
+        <text x="130" y="80" fill="red" font-size="20" font-weight="bold" transform="rotate(-30, 130, 80)">x</text>
+        <path d="M 70 160 A 30 30 0 0 0 95 135" fill="none" stroke="blue" stroke-width="2"/>
+        <text x="100" y="130" fill="blue" font-size="20" font-weight="bold">θ</text>
+      </svg>
+    </div>`,
+    opciones: ['5', '10', '12', '√14'],
+    correcta: 1 // B
+  },
+  {
+    id: 8, area: 'Matemáticas', competencia: 'Pensamiento variacional · Sucesiones y series',
+    enunciado: `<p>Un tanque contiene 500 litros de agua inicialmente y pierde agua a razón de 15 litros por minuto. ¿Cuánta agua quedará después de 20 minutos?</p>`,
+    opciones: ['180 litros', '220 litros', '300 litros', '200 litros'],
+    correcta: 3 // D
+  },
+  {
+    id: 9, area: 'Matemáticas', competencia: 'Pensamiento aleatorio · permutaciones y combinaciones',
+    enunciado: `<p>¿De cuántas formas se pueden elegir 3 estudiantes de un grupo de 10 para formar un comité (sin importar el orden)?</p>`,
+    opciones: ['120', '720', '30', '21'],
+    correcta: 0 // A
+  },
+  {
+    id: 10, area: 'Matemáticas', competencia: 'Pensamiento variacional · Modelamiento matemático',
+    enunciado: `<p>En un estudio se conoce que una bacteria denominada "M", se duplica cada hora. Luis hace un experimento con 50 bacterias inicialmente, ¿cuántas habrá después de 4 horas? Y ¿Qué modelo matemático describe su crecimiento? (Toma en cuenta que t es el tiempo transcurrido en horas).</p>`,
+    opciones: [
+      '800, y el modelo es f(t) = 50 · 2ᵗ',
+      '58, y el modelo es f(t) = 50 + 2t',
+      '800, y el modelo es f(t) = 50 · t²',
+      '2⁵⁴, y el modelo es f(t) = 2⁵⁰⁺ᵗ'
+    ],
+    correcta: 0 // A
+  }
+];
+
+// ============================================================
+//  FUNCIONES AUXILIARES
+// ============================================================
+function mostrarAlerta(titulo, mensaje) {
+  document.getElementById('modalGeneralTitulo').textContent = titulo;
+  document.getElementById('modalGeneralTexto').textContent = mensaje;
+  document.getElementById('modalGeneral').classList.add('active');
+}
+function cerrarModalGeneral() {
+  document.getElementById('modalGeneral').classList.remove('active');
+}
+
+function obtenerNivel(puntaje) {
+  if (puntaje <= 35) return 1;
+  if (puntaje <= 50) return 2;
+  if (puntaje <= 70) return 3;
+  return 4;
+}
+
+    // ============================================================
+    //  SISTEMA DE PERSISTENCIA MEJORADO (IndexedDB + localStorage)
+    // ============================================================
+    
+    const DB_NAME = 'OVA_Diagnostica_G11';
+    
+    // Inicializar IndexedDB
+    function initIndexedDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+        request.onupgradeneeded = (event) => {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains('resultados')) {
+            const store = db.createObjectStore('resultados', { keyPath: 'id', autoIncrement: true });
+            store.createIndex('documento', 'documento', { unique: false });
+            store.createIndex('fecha', 'fecha', { unique: false });
+          }
+        };
+      });
+    }
+    
+    // Guardar resultado con DOBLE PERSISTENCIA
+    async function guardarResultado(resultado) {
+      try {
+        // 1. Guardar en localStorage
+        const datos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        datos.push(resultado);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(datos));
+        
+        // 2. Guardar en IndexedDB
+        try {
+          const db = await initIndexedDB();
+          const transaction = db.transaction(['resultados'], 'readwrite');
+          const store = transaction.objectStore('resultados');
+          const request = store.add(resultado);
+          console.log('✅ Datos guardados en IndexedDB');
+        } catch (err) {
+          console.warn('⚠️ IndexedDB no disponible:', err);
+        }
+        
+        // 3. Guardar en sessionStorage como respaldo
+        sessionStorage.setItem('ultima_respuesta_' + resultado.documento, JSON.stringify(resultado));
+        console.log('✅ Resultado guardado en localStorage y sessionStorage');
+        return true;
+      } catch (error) {
+        console.error('❌ Error crítico al guardar:', error);
+        alert('⚠️ Advertencia: Los datos podrían no haberse guardado correctamente. Por favor, intenta de nuevo.');
+        return false;
+      }
+    }
+    
+    // Obtener datos con RECUPERACIÓN INTELIGENTE
+    // (síncrona a propósito: la usan botones onclick que no son async)
+    function obtenerDatos() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      } catch (error) {
+        console.warn('⚠️ Error leyendo localStorage, se retorna lista vacía', error);
+        return [];
+      }
+    }
+    
+    // Auto-guardar cada 10 segundos (progreso en curso del estudiante)
+    let autoguardoInterval = null;
+    function iniciarAutoguardo() {
+      detenerAutoguardo();
+      autoguardoInterval = setInterval(() => {
+        if (estudianteActual) {
+          sessionStorage.setItem('progreso_g11', JSON.stringify({
+            estudianteActual,
+            respuestasUsuario,
+            alertasFraude
+          }));
+        }
+      }, 10000);
+    }
+    function detenerAutoguardo() {
+      if (autoguardoInterval) { clearInterval(autoguardoInterval); autoguardoInterval = null; }
+    }
+
+    // Recuperar progreso si el navegador se cerró a mitad de la prueba
+    function recuperarProgresoGuardado() {
+      try {
+        const guardado = JSON.parse(sessionStorage.getItem('progreso_g11') || 'null');
+        return guardado;
+      } catch (error) {
+        return null;
+      }
+    }
+    function limpiarProgresoGuardado() {
+      sessionStorage.removeItem('progreso_g11');
+    }
+
+    // Guardar automáticamente antes de cerrar
+    window.addEventListener('beforeunload', () => {
+      if (estudianteActual && respuestasUsuario.some(r => r !== null)) {
+        sessionStorage.setItem('progreso_g11', JSON.stringify({
+          estudianteActual,
+          respuestasUsuario,
+          alertasFraude
+        }));
+      }
+    });
+
+function notaDesdePuntaje(puntaje) {
+  return parseFloat(((puntaje / 100) * 5.0).toFixed(1));
+}
+
+function calificacionCualitativa(nota) {
+  if (nota < 3.0) return { texto: 'Bajo', clase: 'calif-bajo' };
+  if (nota < 4.0) return { texto: 'Básico', clase: 'calif-basico' };
+  if (nota < 4.6) return { texto: 'Alto', clase: 'calif-alto' };
+  return { texto: 'Superior', clase: 'calif-superior' };
+}
+
+// ============================================================
+//  FLUJO ESTUDIANTE
+// ============================================================
+function iniciarPrueba() {
+  const nombre = document.getElementById('nombre').value.trim();
+  const institucion = document.getElementById('institucion').value;
+  const grado = document.getElementById('grado').value;
+  const genero = document.getElementById('genero').value;
+  const tipoId = document.getElementById('tipoId').value;
+  const documento = document.getElementById('documento').value.trim();
+
+  if (!nombre || !documento) {
+    mostrarAlerta('Campos Requeridos', 'Por favor, ingresa tu nombre y número de documento para comenzar la prueba.');
+    return;
+  }
+
+  alertasFraude = 0;
+  estudianteActual = { nombre, institucion, grado, genero, tipoId, documento, fecha: new Date().toISOString() };
+
+  document.getElementById('inicioDashboard').classList.add('hidden');
+  document.getElementById('seccionPreguntas').classList.remove('hidden');
+  
+  renderizarPreguntas();
+  actualizarProgreso();
+  iniciarAutoguardo();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderizarPreguntas() {
+  const container = document.getElementById('preguntasContainer');
+  container.innerHTML = '';
+  respuestasUsuario = [];
+
+  preguntas.forEach((p, idx) => {
+    const div = document.createElement('div');
+    div.className = 'pregunta';
+    div.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
+        <span style="font-weight:700; color:#00695C; font-size:16px;">Pregunta ${p.id} · ${p.area}</span>
+        <span style="font-size:12px; background:#e8edf4; padding:4px 12px; border-radius:12px; font-weight:600; color:#5a6a7a;">${p.competencia}</span>
+      </div>
+      <div class="enunciado">${p.enunciado}</div>
+      <div style="margin-top:12px;">
+        ${p.opciones.map((opt, oi) => `
+          <div class="opcion" onclick="document.getElementById('p${p.id}_${oi}').click();">
+            <input type="radio" name="p${p.id}" value="${oi}" id="p${p.id}_${oi}" onchange="actualizarProgreso()">
+            <label for="p${p.id}_${oi}" onclick="event.stopPropagation()"><strong>${String.fromCharCode(65 + oi)}.</strong> &nbsp; ${opt}</label>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(div);
+    respuestasUsuario.push(null);
+  });
+}
+
+function actualizarProgreso() {
+  let respondidas = 0;
+  preguntas.forEach(p => {
+    if(document.querySelector(`input[name="p${p.id}"]:checked`)) respondidas++;
+  });
+  const porcentaje = (respondidas / preguntas.length) * 100;
+  document.getElementById('barraProgreso').style.width = porcentaje + '%';
+}
+
+function calificar() {
+  const respondidas = document.querySelectorAll('input[type="radio"]:checked').length;
+  if (respondidas < preguntas.length) {
+    mostrarAlerta('Aviso de Prueba', `Aún faltan ${preguntas.length - respondidas} preguntas por responder. Selecciona todas las respuestas antes de finalizar.`);
+    return;
+  }
+
+  let totalLC = 0, totalMAT = 0;
+  let aciertosLC = 0, aciertosMAT = 0;
+
+  preguntas.forEach((p, idx) => {
+    const radios = document.querySelectorAll(`input[name="p${p.id}"]`);
+    let seleccionado = null;
+    radios.forEach(r => { if (r.checked) seleccionado = parseInt(r.value); });
+    respuestasUsuario[idx] = seleccionado;
+    
+    if (p.area === 'Lectura Crítica') {
+      totalLC++;
+      if (seleccionado === p.correcta) aciertosLC++;
+    } else {
+      totalMAT++;
+      if (seleccionado === p.correcta) aciertosMAT++;
+    }
+  });
+
+  const puntajeLC = Math.round((aciertosLC / totalLC) * 100);
+  const puntajeMAT = Math.round((aciertosMAT / totalMAT) * 100);
+  const notaLC = notaDesdePuntaje(puntajeLC);
+  const notaMAT = notaDesdePuntaje(puntajeMAT);
+  const nivelLC = obtenerNivel(puntajeLC);
+  const nivelMAT = obtenerNivel(puntajeMAT);
+  const puntajeTotal = Math.round((puntajeLC + puntajeMAT) / 2);
+
+  const resultado = {
+    ...estudianteActual,
+    aciertosLC, totalLC, puntajeLC, notaLC, nivelLC,
+    aciertosMAT, totalMAT, puntajeMAT, notaMAT, nivelMAT,
+    puntajeTotal,
+    alertasFraude: alertasFraude,
+    respuestas: respuestasUsuario,
+    fecha: new Date().toISOString()
+  };
+  
+  guardarResultado(resultado);
+  detenerAutoguardo();
+  limpiarProgresoGuardado();
+  
+  // Mostrar resultados al estudiante
+  document.getElementById('studentNameResult').textContent = `Resultado de ${estudianteActual.nombre}`;
+  document.getElementById('studentInfoResult').textContent = `${estudianteActual.institucion} · Grado ${estudianteActual.grado}`;
+  
+  document.getElementById('r_aciertosLC').textContent = `${aciertosLC}/${totalLC}`;
+  document.getElementById('r_puntajeLC').textContent = puntajeLC;
+  document.getElementById('r_notaLC').textContent = notaLC.toFixed(1);
+  document.getElementById('r_badgeLC').textContent = `Nivel ${nivelLC}`;
+  document.getElementById('r_badgeLC').className = `nivel-badge nivel-${nivelLC}`;
+  document.getElementById('r_descLC').textContent = descriptores.LC[nivelLC];
+  
+  document.getElementById('r_aciertosMAT').textContent = `${aciertosMAT}/${totalMAT}`;
+  document.getElementById('r_puntajeMAT').textContent = puntajeMAT;
+  document.getElementById('r_notaMAT').textContent = notaMAT.toFixed(1);
+  document.getElementById('r_badgeMAT').textContent = `Nivel ${nivelMAT}`;
+  document.getElementById('r_badgeMAT').className = `nivel-badge nivel-${nivelMAT}`;
+  document.getElementById('r_descMAT').textContent = descriptores.MAT[nivelMAT];
+
+  document.getElementById('seccionPreguntas').classList.add('hidden');
+  document.getElementById('resultados').classList.remove('hidden');
+  
+  setTimeout(() => {
+    document.getElementById('barLC').style.width = puntajeLC + '%';
+    document.getElementById('barMAT').style.width = puntajeMAT + '%';
+  }, 100);
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function mostrarPlanMejora(area) {
+  const datos = obtenerDatos();
+  const res = datos[datos.length - 1];
+  const nivel = area === 'LC' ? res.nivelLC : res.nivelMAT;
+  const titulo = area === 'LC' ? 'Lectura Crítica' : 'Matemáticas';
+  
+  document.getElementById('modalPlanTitulo').textContent = `Plan de Mejora - ${titulo} (Nivel ${nivel})`;
+  document.getElementById('modalPlanTexto').innerHTML = planesMejora[area][nivel];
+  document.getElementById('modalPlan').classList.add('active');
+}
+function cerrarModalPlan() {
+  document.getElementById('modalPlan').classList.remove('active');
+}
+
+// ============================================================
+//  ACCESO DOCENTE
+// ============================================================
+function verificarLogin() {
+  const nombreDoc = document.getElementById('docenteNombre').value.trim();
+  const correoDoc = document.getElementById('docenteCorreo').value.trim();
+  const pwd = document.getElementById('inputPwd').value.trim();
+
+  if (!nombreDoc || !correoDoc || !pwd) {
+    mostrarAlerta('Campos incompletos', 'Por favor, completa todos los campos para acceder al panel.');
+    return;
+  }
+
+  if (!correoDoc.endsWith('@unad.edu.co')) {
+    mostrarAlerta('Correo inválido', 'El correo debe ser institucional y terminar en @unad.edu.co');
+    return;
+  }
+
+  if (pwd !== 'UNAD2026') {
+    mostrarAlerta('Contraseña incorrecta', 'La contraseña de seguridad no coincide.');
+    return;
+  }
+
+  document.getElementById('inicioDashboard').classList.add('hidden');
+  document.getElementById('panelDocente').classList.remove('hidden');
+  renderizarPanel();
+}
+
+function cerrarPanelDocente() {
+  document.getElementById('panelDocente').classList.add('hidden');
+  document.getElementById('inicioDashboard').classList.remove('hidden');
+}
+
+// ============================================================
+//  PANEL DOCENTE (con notas individuales y botón Detalle)
+// ============================================================
+function renderizarPanel() {
+  const datos = obtenerDatos();
+  const filtroInst = document.getElementById('filtroInstitucion').value;
+  const filtroGrado = document.getElementById('filtroGrado').value;
+  const filtroGenero = document.getElementById('filtroGenero').value;
+
+  let filtrados = datos.filter(d => {
+    if (filtroInst && d.institucion !== filtroInst) return false;
+    if (filtroGrado && d.grado !== filtroGrado) return false;
+    if (filtroGenero && d.genero !== filtroGenero) return false;
+    return true;
+  });
+
+  // KPIs
+  const total = filtrados.length;
+  const promedioLC = total ? Math.round(filtrados.reduce((s, d) => s + d.puntajeLC, 0) / total) : 0;
+  const promedioMAT = total ? Math.round(filtrados.reduce((s, d) => s + d.puntajeMAT, 0) / total) : 0;
+  const niveles = [0,0,0,0];
+  filtrados.forEach(d => {
+    const n = obtenerNivel(d.puntajeTotal);
+    if (n>=1 && n<=4) niveles[n-1]++;
+  });
+
+  document.getElementById('kpiGrid').innerHTML = `
+    <div class="kpi-card"><div class="valor">${total}</div><div class="etiqueta">Estudiantes evaluados</div></div>
+    <div class="kpi-card"><div class="valor">${promedioLC}</div><div class="etiqueta">Prom. Lectura Crítica</div></div>
+    <div class="kpi-card"><div class="valor">${promedioMAT}</div><div class="etiqueta">Prom. Matemáticas</div></div>
+    <div class="kpi-card"><div class="valor">${niveles[0]}</div><div class="etiqueta">Nivel 1</div></div>
+    <div class="kpi-card"><div class="valor">${niveles[1]}</div><div class="etiqueta">Nivel 2</div></div>
+    <div class="kpi-card"><div class="valor">${niveles[2]}</div><div class="etiqueta">Nivel 3</div></div>
+    <div class="kpi-card"><div class="valor">${niveles[3]}</div><div class="etiqueta">Nivel 4</div></div>
+  `;
+
+  const tbody = document.getElementById('tbodyResultados');
+  tbody.innerHTML = '';
+  filtrados.forEach((d, i) => {
+    const nivelGlobal = obtenerNivel(d.puntajeTotal);
+    const notaLC = d.notaLC || notaDesdePuntaje(d.puntajeLC);
+    const notaMAT = d.notaMAT || notaDesdePuntaje(d.puntajeMAT);
+    const califLC = calificacionCualitativa(notaLC);
+    const califMAT = calificacionCualitativa(notaMAT);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${d.nombre}</td>
+      <td>${d.institucion}</td>
+      <td>${d.grado}</td>
+      <td>${notaLC.toFixed(1)} <span class="calificacion-badge ${califLC.clase}">${califLC.texto}</span></td>
+      <td>${notaMAT.toFixed(1)} <span class="calificacion-badge ${califMAT.clase}">${califMAT.texto}</span></td>
+      <td><strong>${d.puntajeTotal}</strong> / 100</td>
+      <td><span class="nivel-badge nivel-${nivelGlobal}" style="margin:0; padding:4px 8px;">Nivel ${nivelGlobal}</span></td>
+      <td><button class="btn btn-outline" style="font-size:11px; padding:4px 8px;" onclick="verInformeDocente(${i})">📄 Informe</button></td>
+      <td><button class="btn btn-outline" style="font-size:11px; padding:4px 8px;" onclick="verDetalleDocente(${i})">🔍 Detalle</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  window._datosFiltrados = filtrados;
+}
+
+// ============================================================
+//  INFORME CUALITATIVO (docente)
+// ============================================================
+function verInformeDocente(index) {
+  const datos = window._datosFiltrados || [];
+  if (!datos.length || index >= datos.length) return;
+  const d = datos[index];
+
+  let fortaleza = '';
+  if (d.puntajeLC >= d.puntajeMAT) {
+    fortaleza = `📖 Lectura Crítica (${d.puntajeLC} puntos) – ${descriptores.LC[d.nivelLC]}`;
+  } else {
+    fortaleza = `📐 Matemáticas (${d.puntajeMAT} puntos) – ${descriptores.MAT[d.nivelMAT]}`;
+  }
+
+  let areaMejora = '';
+  let nivelMejora = 0;
+  if (d.nivelLC <= d.nivelMAT) {
+    areaMejora = 'Lectura Crítica';
+    nivelMejora = d.nivelLC;
+  } else {
+    areaMejora = 'Matemáticas';
+    nivelMejora = d.nivelMAT;
+  }
+  const planMejora = planesMejora[areaMejora === 'Lectura Crítica' ? 'LC' : 'MAT'][nivelMejora];
+
+  const contenido = `
+    <p><strong>Estudiante:</strong> ${d.nombre}</p>
+    <p><strong>Institución:</strong> ${d.institucion} · Grado ${d.grado}</p>
+    <hr style="margin: 16px 0;">
+    <h4 style="color:#00695C;">✅ Fortalezas</h4>
+    <p>${fortaleza}</p>
+    <h4 style="color:#00695C; margin-top:16px;">📌 Plan de Mejora</h4>
+    <p><strong>Área a reforzar:</strong> ${areaMejora} (Nivel ${nivelMejora})</p>
+    <p>${planMejora}</p>
+    <hr style="margin: 16px 0;">
+    <p style="font-size:13px; color:#7f8c8d;">Este informe se genera automáticamente a partir de los resultados obtenidos en la prueba diagnóstica.</p>
+  `;
+
+  document.getElementById('modalInformeTitulo').textContent = `Informe de ${d.nombre}`;
+  document.getElementById('modalInformeContenido').innerHTML = contenido;
+  document.getElementById('modalInformeDocente').classList.add('active');
+}
+function cerrarModalInformeDocente() {
+  document.getElementById('modalInformeDocente').classList.remove('active');
+}
+
+// ============================================================
+//  DETALLE DE RESPUESTAS
+// ============================================================
+function verDetalleDocente(index) {
+  const datos = window._datosFiltrados || [];
+  if (!datos.length || index >= datos.length) return;
+  const d = datos[index];
+
+  const respuestas = d.respuestas || [];
+  const notaLC = d.notaLC || notaDesdePuntaje(d.puntajeLC);
+  const notaMAT = d.notaMAT || notaDesdePuntaje(d.puntajeMAT);
+  const califLC = calificacionCualitativa(notaLC);
+  const califMAT = calificacionCualitativa(notaMAT);
+
+  let html = `
+    <p><strong>Estudiante:</strong> ${d.nombre} · <strong>Institución:</strong> ${d.institucion} · <strong>Grado:</strong> ${d.grado}</p>
+    <table class="detalle-tabla">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Área</th>
+          <th>Respuesta</th>
+          <th>Correcta</th>
+          <th>Resultado</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  preguntas.forEach((p, idx) => {
+    const seleccionado = (respuestas[idx] !== undefined && respuestas[idx] !== null) ? respuestas[idx] : -1;
+    const correcta = p.correcta;
+    const esCorrecta = (seleccionado === correcta);
+    const letraSeleccionada = seleccionado >= 0 ? String.fromCharCode(65 + seleccionado) : '—';
+    const letraCorrecta = String.fromCharCode(65 + correcta);
+    const resultadoIcon = esCorrecta ? '✅ Correcta' : '❌ Incorrecta';
+    const claseResultado = esCorrecta ? 'correcta' : 'incorrecta';
+
+    html += `
+      <tr>
+        <td>${p.id}</td>
+        <td>${p.area}</td>
+        <td>${letraSeleccionada}</td>
+        <td>${letraCorrecta}</td>
+        <td class="${claseResultado}">${resultadoIcon}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </tbody>
+    </table>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 12px;">
+      <div><strong>Lectura Crítica:</strong> ${notaLC.toFixed(1)} <span class="calificacion-badge ${califLC.clase}">${califLC.texto}</span></div>
+      <div><strong>Matemáticas:</strong> ${notaMAT.toFixed(1)} <span class="calificacion-badge ${califMAT.clase}">${califMAT.texto}</span></div>
+      <div><strong>Promedio:</strong> ${d.puntajeTotal} / 100</div>
+    </div>
+  `;
+
+  document.getElementById('modalDetalleTitulo').textContent = `Detalle de respuestas – ${d.nombre}`;
+  document.getElementById('modalDetalleContenido').innerHTML = html;
+  document.getElementById('modalDetalle').classList.add('active');
+}
+function cerrarModalDetalle() {
+  document.getElementById('modalDetalle').classList.remove('active');
+}
+
+// ============================================================
+//  EXPORTACIONES Y LIMPIEZA
+// ============================================================
+function exportarCSV() {
+  const datos = obtenerDatos();
+  if (!datos.length) return mostrarAlerta('Exportar', 'No hay datos almacenados.');
+  const cabeceras = ['Nombre','Institución','Grado','Género','Documento','Pt_LC','Nivel_LC','Nota_LC','Pt_MAT','Nivel_MAT','Nota_MAT','Global','Alertas','Fecha'];
+  let csv = cabeceras.join(',') + '\n';
+  datos.forEach(d => {
+    csv += [`"${d.nombre}"`,`"${d.institucion}"`,`"${d.grado}"`,`"${d.genero}"`,`"${d.documento}"`, d.puntajeLC, d.nivelLC, (d.notaLC||notaDesdePuntaje(d.puntajeLC)).toFixed(1), d.puntajeMAT, d.nivelMAT, (d.notaMAT||notaDesdePuntaje(d.puntajeMAT)).toFixed(1), d.puntajeTotal, (d.alertasFraude||0), `"${d.fecha}"`].join(',') + '\n';
+  });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  link.download = `Resultados_11_${new Date().toISOString().slice(0,10)}.csv`;
+  link.click();
+}
+
+function exportarJSON() {
+  const datos = obtenerDatos();
+  if (!datos.length) return;
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' }));
+  link.download = `Resultados_11_${new Date().toISOString().slice(0,10)}.json`;
+  link.click();
+}
+
+function limpiarDatos() {
+  if (confirm('¿Borrar TODOS los datos permanentemente?')) {
+    localStorage.removeItem(STORAGE_KEY);
+    renderizarPanel();
+  }
+}
+
+function reiniciar() {
+  location.reload();
+}
+
+function descargarMaterialOffline() {
+  if(document.getElementById('preguntasContainer').innerHTML === '') renderizarPreguntas();
+  const seccionPreguntas = document.getElementById('seccionPreguntas');
+  seccionPreguntas.classList.remove('hidden');
+  window.print();
+  if (!estudianteActual) seccionPreguntas.classList.add('hidden');
+}
+
+// ============================================================
+//  RECUPERACIÓN DE PROGRESO AL CARGAR LA PÁGINA
+// ============================================================
+window.addEventListener('load', () => {
+  const guardado = recuperarProgresoGuardado();
+  if (guardado && guardado.estudianteActual && Array.isArray(guardado.respuestasUsuario) && guardado.respuestasUsuario.some(r => r !== null)) {
+    const continuar = confirm(`Se encontró una prueba sin terminar de ${guardado.estudianteActual.nombre}. ¿Deseas continuar donde la dejaste?`);
+    if (continuar) {
+      estudianteActual = guardado.estudianteActual;
+      alertasFraude = guardado.alertasFraude || 0;
+
+      document.getElementById('inicioDashboard').classList.add('hidden');
+      document.getElementById('seccionPreguntas').classList.remove('hidden');
+      renderizarPreguntas();
+
+      guardado.respuestasUsuario.forEach((valor, idx) => {
+        if (valor !== null && valor !== undefined) {
+          const p = preguntas[idx];
+          const radio = document.getElementById(`p${p.id}_${valor}`);
+          if (radio) radio.checked = true;
+        }
+      });
+      respuestasUsuario = guardado.respuestasUsuario;
+      actualizarProgreso();
+      iniciarAutoguardo();
+    } else {
+      limpiarProgresoGuardado();
+    }
+  }
+});
+
+// ============================================================
+//  SEGURIDAD
+// ============================================================
+document.addEventListener('keydown', e => { if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase()))) e.preventDefault(); });
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden && !document.getElementById('seccionPreguntas').classList.contains('hidden')) alertasFraude++;
+});
+</script>
+</body>
+</html>
