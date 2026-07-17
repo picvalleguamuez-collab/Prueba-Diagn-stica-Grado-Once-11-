@@ -355,8 +355,12 @@
     <p style="font-size: 13px; color: #7f8c8d; text-align: center; margin-bottom: 20px;">
       Esta información ha sido registrada y será usada por tus docentes para fortalecer los procesos de enseñanza y aprendizaje.
     </p>
-    <div style="text-align: center;">
-      <button class="btn btn-orange" onclick="reiniciar()" style="padding: 12px 40px;">Finalizar</button>
+    <div style="background:#fff8e1; border:1px solid #FFB300; border-radius:10px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; color:#5a4a00;">
+      📌 <strong>¿Respondiste desde un celular, tablet o computador distinto al del docente?</strong> Tu resultado se guardó únicamente en este equipo. Descarga el archivo y envíalo por WhatsApp o correo a tu docente para que lo cargue en el panel.
+    </div>
+    <div style="text-align: center; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+      <button class="btn btn-outline" onclick="descargarMiResultado()" style="padding: 12px 24px;">📤 Descargar mi resultado (para el docente)</button>
+      <button class="btn btn-orange" onclick="terminarPrueba()" style="padding: 12px 40px;">🏁 Terminar Prueba</button>
     </div>
   </div>
 
@@ -365,6 +369,11 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
       <h2>📊 Panel de Control Docente</h2>
       <button class="btn btn-outline" style="padding: 6px 16px; font-size: 14px;" onclick="cerrarPanelDocente()">← Salir</button>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; background:#eef7f2; border:1px solid #c8e6d9; border-radius:8px; padding:10px 16px; margin-bottom:16px; font-size:13.5px;">
+      <span id="estadoSync">⚪ Verificando sincronización...</span>
+      <button class="btn btn-outline" style="padding:5px 14px; font-size:13px;" onclick="sincronizarPanelDocente(false)">🔄 Sincronizar ahora</button>
     </div>
 
     <div class="filtros">
@@ -414,6 +423,8 @@
     <div style="margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap;">
       <button class="btn btn-orange" onclick="exportarCSV()">⬇ Exportar a Excel (CSV)</button>
       <button class="btn btn-outline" onclick="exportarJSON()">⬇ Exportar para Power BI (JSON)</button>
+      <button class="btn btn-gold" onclick="document.getElementById('inputImportar').click()">📥 Importar resultados de otros equipos (JSON)</button>
+      <input type="file" id="inputImportar" accept=".json" multiple style="display:none" onchange="importarResultados(event)">
       <button class="btn btn-outline" onclick="limpiarDatos()" style="margin-left: auto;">🗑 Borrar todos los datos</button>
     </div>
   </div>
@@ -489,7 +500,18 @@
 let respuestasUsuario = [];
 let estudianteActual = null;
 let alertasFraude = 0;
+let ultimoResultado = null;
 const STORAGE_KEY = 'ova_diagnostica_11';
+
+// ============================================================
+//  SINCRONIZACIÓN EN LA NUBE (opcional, tiempo real)
+// ============================================================
+// Pega aquí la URL de tu Google Apps Script (termina en /exec).
+// Instrucciones completas en "Codigo_Backend_GoogleAppsScript.gs".
+// Si la dejas vacía (''), el OVA sigue funcionando 100% offline
+// como antes, solo que sin sincronización automática entre equipos.
+const BACKEND_URL = '';
+const PENDIENTES_KEY = 'pendientes_sync_g11';
 
 // Planes de mejora (genéricos, iguales para todos los grados)
 const planesMejora = {
@@ -691,6 +713,10 @@ function obtenerNivel(puntaje) {
         // 3. Guardar en sessionStorage como respaldo
         sessionStorage.setItem('ultima_respuesta_' + resultado.documento, JSON.stringify(resultado));
         console.log('✅ Resultado guardado en localStorage y sessionStorage');
+
+        // 4. Enviar a la nube para que el docente lo vea en tiempo real
+        sincronizarConNube(resultado);
+
         return true;
       } catch (error) {
         console.error('❌ Error crítico al guardar:', error);
@@ -708,6 +734,88 @@ function obtenerNivel(puntaje) {
         console.warn('⚠️ Error leyendo localStorage, se retorna lista vacía', error);
         return [];
       }
+    }
+
+    // ---- Envío al backend (estudiante -> nube) ----
+    function sincronizarConNube(resultado) {
+      if (!BACKEND_URL) return; // sin backend configurado: solo modo offline
+      fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight CORS en Apps Script
+        body: JSON.stringify(resultado)
+      }).then(() => {
+        console.log('☁️ Resultado sincronizado con la nube');
+      }).catch(err => {
+        console.warn('⚠️ Sin conexión, se reintentará más tarde:', err);
+        encolarPendienteSync(resultado);
+      });
+    }
+
+    function encolarPendienteSync(resultado) {
+      const pendientes = JSON.parse(localStorage.getItem(PENDIENTES_KEY) || '[]');
+      pendientes.push(resultado);
+      localStorage.setItem(PENDIENTES_KEY, JSON.stringify(pendientes));
+    }
+
+    async function flushPendientesSync() {
+      if (!BACKEND_URL) return;
+      const pendientes = JSON.parse(localStorage.getItem(PENDIENTES_KEY) || '[]');
+      if (!pendientes.length) return;
+      const restantes = [];
+      for (const r of pendientes) {
+        try {
+          await fetch(BACKEND_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(r)
+          });
+        } catch (err) {
+          restantes.push(r);
+        }
+      }
+      localStorage.setItem(PENDIENTES_KEY, JSON.stringify(restantes));
+    }
+    window.addEventListener('online', flushPendientesSync);
+    window.addEventListener('load', flushPendientesSync);
+
+    // ---- Consulta desde el panel docente (nube -> panel) ----
+    let intervaloSyncDocente = null;
+    async function sincronizarPanelDocente(silencioso) {
+      const estado = document.getElementById('estadoSync');
+      if (!BACKEND_URL) {
+        if (estado) estado.textContent = '⚪ Sincronización en la nube no configurada (modo local únicamente)';
+        return;
+      }
+      try {
+        if (estado && !silencioso) estado.textContent = '🔄 Sincronizando...';
+        const resp = await fetch(BACKEND_URL);
+        const remotos = await resp.json();
+        if (!Array.isArray(remotos)) throw new Error('Respuesta inválida del backend');
+
+        const datosActuales = obtenerDatos();
+        let nuevos = 0;
+        remotos.forEach(r => {
+          const existe = datosActuales.some(d => d.documento === r.documento && d.fecha === r.fecha);
+          if (!existe) { datosActuales.push(r); nuevos++; }
+        });
+        if (nuevos > 0) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(datosActuales));
+          renderizarPanel();
+        }
+        if (estado) estado.textContent = `☁️ Sincronizado ${new Date().toLocaleTimeString()} — ${nuevos} nuevo(s) esta vez`;
+      } catch (error) {
+        console.warn('⚠️ No se pudo sincronizar con la nube:', error);
+        if (estado) estado.textContent = '⚠️ Sin conexión con la nube (mostrando datos locales)';
+      }
+    }
+
+    function iniciarAutoSyncDocente() {
+      sincronizarPanelDocente(false);
+      detenerAutoSyncDocente();
+      intervaloSyncDocente = setInterval(() => sincronizarPanelDocente(true), 15000);
+    }
+    function detenerAutoSyncDocente() {
+      if (intervaloSyncDocente) { clearInterval(intervaloSyncDocente); intervaloSyncDocente = null; }
     }
     
     // Auto-guardar cada 10 segundos (progreso en curso del estudiante)
@@ -874,6 +982,7 @@ function calificar() {
   guardarResultado(resultado);
   detenerAutoguardo();
   limpiarProgresoGuardado();
+  ultimoResultado = resultado;
   
   // Mostrar resultados al estudiante
   document.getElementById('studentNameResult').textContent = `Resultado de ${estudianteActual.nombre}`;
@@ -944,11 +1053,13 @@ function verificarLogin() {
   document.getElementById('inicioDashboard').classList.add('hidden');
   document.getElementById('panelDocente').classList.remove('hidden');
   renderizarPanel();
+  iniciarAutoSyncDocente();
 }
 
 function cerrarPanelDocente() {
   document.getElementById('panelDocente').classList.add('hidden');
   document.getElementById('inicioDashboard').classList.remove('hidden');
+  detenerAutoSyncDocente();
 }
 
 // ============================================================
@@ -1154,11 +1265,69 @@ function exportarJSON() {
   link.click();
 }
 
+function descargarMiResultado() {
+  if (!ultimoResultado) return;
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(new Blob([JSON.stringify([ultimoResultado], null, 2)], { type: 'application/json' }));
+  const nombreArchivo = (ultimoResultado.nombre || 'estudiante').replace(/[^a-z0-9]+/gi, '_');
+  link.download = `Resultado_${nombreArchivo}_${ultimoResultado.documento}.json`;
+  link.click();
+}
+
+function importarResultados(event) {
+  const archivos = Array.from(event.target.files || []);
+  if (!archivos.length) return;
+
+  let importados = 0, duplicados = 0, procesados = 0;
+
+  archivos.forEach(archivo => {
+    const lector = new FileReader();
+    lector.onload = (e) => {
+      procesados++;
+      try {
+        const contenido = JSON.parse(e.target.result);
+        const nuevos = Array.isArray(contenido) ? contenido : [contenido];
+        const datosActuales = obtenerDatos();
+
+        nuevos.forEach(nuevo => {
+          const yaExiste = datosActuales.some(d => d.documento === nuevo.documento && d.fecha === nuevo.fecha);
+          if (yaExiste) {
+            duplicados++;
+          } else {
+            datosActuales.push(nuevo);
+            importados++;
+          }
+        });
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(datosActuales));
+      } catch (error) {
+        console.error('Error al importar archivo:', archivo.name, error);
+        mostrarAlerta('Error al importar', `El archivo "${archivo.name}" no tiene un formato JSON válido.`);
+      }
+
+      if (procesados === archivos.length) {
+        renderizarPanel();
+        mostrarAlerta('Importación completada', `✅ ${importados} resultado(s) importado(s). ${duplicados > 0 ? `⚠️ ${duplicados} ya existían y se omitieron.` : ''}`);
+        event.target.value = '';
+      }
+    };
+    lector.readAsText(archivo);
+  });
+}
+
 function limpiarDatos() {
   if (confirm('¿Borrar TODOS los datos permanentemente?')) {
     localStorage.removeItem(STORAGE_KEY);
     renderizarPanel();
   }
+}
+
+function terminarPrueba() {
+  if (ultimoResultado) {
+    const yaDescargo = confirm('Antes de salir: si respondiste desde un celular u otro equipo distinto al del docente, recuerda descargar tu resultado con el botón de arriba y enviárselo.\n\nPresiona Aceptar para volver al inicio.');
+    if (!yaDescargo) return;
+  }
+  reiniciar();
 }
 
 function reiniciar() {
